@@ -1,9 +1,11 @@
 import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.util.HashSet;
 import javax.swing.*;
 
 
-public class PacMan extends JPanel {
+public class PacMan extends JPanel implements ActionListener {
     class Block {
         int x;
         int y;
@@ -149,9 +151,14 @@ public class PacMan extends JPanel {
             g.drawImage(wall.image, wall.x, wall.y, wall.width, wall.height, null);
         }
 
-        g.setColor(Color.CYAN);   //color of food
+        g.setColor(Color.white);   //color of food
         for (Block food: foods) {
             g.fillRect(food.x, food.y, food.width, food.height);
         }
+    }
+
+    @Override
+    public void actionPerformed(ActionEvent e) {
+        repaint();
     }
 }
