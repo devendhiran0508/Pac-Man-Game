@@ -1,11 +1,13 @@
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.KeyEvent;
+import java.awt.event.KeyListener;
 import java.util.HashSet;
 import javax.swing.*;
 
 
-public class PacMan extends JPanel implements ActionListener {
+public class PacMan extends JPanel implements ActionListener, KeyListener {
     class Block {
         int x;
         int y;
@@ -72,9 +74,13 @@ public class PacMan extends JPanel implements ActionListener {
     HashSet<Block> ghosts;
     Block pacman;
 
+    Timer gameLoop;
+
     PacMan() {
         setPreferredSize(new Dimension(boardWidth, boardHeight));
         setBackground(Color.BLACK);
+        addKeyListener(this);
+        setFocusable(true);
 
         //load the images
         wallImage = new ImageIcon(getClass().getResource("./wall.png")).getImage();
@@ -89,6 +95,8 @@ public class PacMan extends JPanel implements ActionListener {
         pacmanRightImage = new ImageIcon(getClass().getResource("./pacmanRight.png")).getImage();
 
         loadMap();
+        gameLoop = new Timer(50,this);  //20fps  1000/50
+        gameLoop.start();
     }
 
     public void loadMap() {
@@ -160,5 +168,18 @@ public class PacMan extends JPanel implements ActionListener {
     @Override
     public void actionPerformed(ActionEvent e) {
         repaint();
+    }
+
+    @Override
+    public void keyTyped(KeyEvent e) {
+    }
+
+    @Override
+    public void keyPressed(KeyEvent e) {
+    }
+
+    @Override
+    public void keyReleased(KeyEvent e) {
+        System.out.println("keyEvent: "+e.getKeyCode());
     }
 }
