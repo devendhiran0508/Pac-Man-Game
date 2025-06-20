@@ -120,7 +120,9 @@ public class PacMan extends JPanel implements ActionListener, KeyListener {
     Timer gameLoop;
     char directions[] = {'U', 'D', 'L', 'R'};
     Random random = new Random();    //to move the ghost randomly based on directions
-
+    int score = 0;
+    int lives = 3;
+    boolean gameOver = false;
 
     PacMan() {
         setPreferredSize(new Dimension(boardWidth, boardHeight));
@@ -213,6 +215,15 @@ public class PacMan extends JPanel implements ActionListener, KeyListener {
         for (Block food: foods) {
             g.fillRect(food.x, food.y, food.width, food.height);
         }
+
+        //to display score and lives
+        g.setFont(new Font("Arial", Font.PLAIN, 20));
+        if (gameOver) {
+            g.drawString("Game Over!" + "Score:"+String.valueOf(score),tileSize/2,tileSize/2);
+        }
+        else {
+            g.drawString("X" + String.valueOf(lives) + " Score:" + String.valueOf(score), tileSize/2, tileSize/2);
+        }
     }
 
     public void move() {
@@ -241,13 +252,19 @@ public class PacMan extends JPanel implements ActionListener, KeyListener {
                     char newDirection = directions[random.nextInt(4)];  // Randomly select a new direction
                     ghost.updateDirection(newDirection);
                 }
-            }
+            }  
+        }
 
-            if (isCollision(pacman, ghost)) {      // If pacman collides with a ghost, reset the game
-                loadMap();
-                pacman.updateDirection('R');  // Reset pacman's direction to right
-            }   
-        }}
+        //to check for food collision
+        Block foodEaten = null;
+        for (Block food: foods) {
+            if (isCollision(pacman, food)) {
+                foodEaten = food;
+                score += 10;  // Increment score by 10 for each food eaten
+            }
+        }
+        foods.remove(foodEaten);  // Remove the food from the set if eaten
+    }
     
 
     public boolean isCollision(Block block1, Block block2) {
