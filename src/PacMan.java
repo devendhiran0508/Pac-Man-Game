@@ -226,13 +226,16 @@ public class PacMan extends JPanel implements ActionListener, KeyListener {
                 break;
             }
         }
-
+        //check ghost collisions 
         for (Block ghost: ghosts) {
+            if (ghost.y == tileSize*9 && ghost.direction != 'U' && ghost.direction != 'D') {  // If ghost is at the center of the board, change direction to up or down
+                ghost.updateDirection('U');
+            }
             ghost.x += ghost.velocityX;          // Move each ghost
             ghost.y += ghost.velocityY;
 
             for (Block wall: walls) {
-                if (isCollision(ghost, wall)) {    // If collision with wall, revert to previous position
+                if (isCollision(ghost, wall) || ghost.x<=0 || ghost.x + ghost.width >= boardWidth) {    // If collision with wall, revert to previous position
                     ghost.x -= ghost.velocityX;
                     ghost.y -= ghost.velocityY;
                     char newDirection = directions[random.nextInt(4)];  // Randomly select a new direction
@@ -245,7 +248,7 @@ public class PacMan extends JPanel implements ActionListener, KeyListener {
                 pacman.updateDirection('R');  // Reset pacman's direction to right
             }   
         }}
-    }
+    
 
     public boolean isCollision(Block block1, Block block2) {
         return block1.x < block2.x + block2.width &&
