@@ -4,6 +4,7 @@ import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.util.HashSet;
+import java.util.Random;
 import javax.swing.*;
 
 
@@ -117,6 +118,9 @@ public class PacMan extends JPanel implements ActionListener, KeyListener {
     Block pacman;
 
     Timer gameLoop;
+    char directions[] = {'U', 'D', 'L', 'R'};
+    Random random = new Random();    //to move the ghost randomly based on directions
+
 
     PacMan() {
         setPreferredSize(new Dimension(boardWidth, boardHeight));
@@ -137,6 +141,10 @@ public class PacMan extends JPanel implements ActionListener, KeyListener {
         pacmanRightImage = new ImageIcon(getClass().getResource("./pacmanRight.png")).getImage();
 
         loadMap();
+        for (Block ghost: ghosts) {
+            char newDirection =directions[random.nextInt(4)];  // Randomly select a direction for each ghost
+            ghost.updateDirection(newDirection);
+        }
         gameLoop = new Timer(50,this);  //20fps  1000/50
         gameLoop.start();
     }
@@ -218,6 +226,25 @@ public class PacMan extends JPanel implements ActionListener, KeyListener {
                 break;
             }
         }
+
+        for (Block ghost: ghosts) {
+            ghost.x += ghost.velocityX;          // Move each ghost
+            ghost.y += ghost.velocityY;
+
+            for (Block wall: walls) {
+                if (isCollision(ghost, wall)) {    // If collision with wall, revert to previous position
+                    ghost.x -= ghost.velocityX;
+                    ghost.y -= ghost.velocityY;
+                    char newDirection = directions[random.nextInt(4)];  // Randomly select a new direction
+                    ghost.updateDirection(newDirection);
+                }
+            }
+
+            if (isCollision(pacman, ghost)) {      // If pacman collides with a ghost, reset the game
+                loadMap();
+                pacman.updateDirection('R');  // Reset pacman's direction to right
+            }   
+        }}
     }
 
     public boolean isCollision(Block block1, Block block2) {
