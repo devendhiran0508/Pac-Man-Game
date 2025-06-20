@@ -3,6 +3,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
+import java.lang.management.ThreadInfo;
 import java.util.HashSet;
 import javax.swing.*;
 
@@ -17,6 +18,9 @@ public class PacMan extends JPanel implements ActionListener, KeyListener {
 
         int startX;  // To know the start position of x when the game restarts
         int startY;  // To know the start position of y when the game restarts
+        char direction =  'U';
+        int velocityX = 0;
+        int velocityY = 0;
 
         Block(Image image, int x, int y, int width, int height) {
             this.image = image;
@@ -26,6 +30,30 @@ public class PacMan extends JPanel implements ActionListener, KeyListener {
             this.height = height;
             this.startX = x;
             this.startY = y;
+        }
+
+        void updateDirection(char direction) {
+            this.direction = direction;
+            updateVelocity();
+        }
+
+        void updateVelocity() {
+            if (this.direction == 'U') {
+                this.velocityX = 0;
+                this.velocityY = -tileSize/4;
+            }
+            else if (this.direction == 'D') {
+                this.velocityX = 0;
+                this.velocityY = tileSize/4;
+            }
+            else if (this.direction == 'L') {
+                this.velocityX = -tileSize/4;
+                this.velocityY = 0;
+            }
+            else if (this.direction == 'R') {
+                this.velocityX = tileSize/4;
+                this.velocityY = 0; 
+            }
         }
     }
     private int rowCount = 21;
@@ -164,9 +192,14 @@ public class PacMan extends JPanel implements ActionListener, KeyListener {
             g.fillRect(food.x, food.y, food.width, food.height);
         }
     }
+    public void move() {
+        pacman.x += pacman.velocityX;
+        pacman.y += pacman.velocityY;
+    }
 
     @Override
     public void actionPerformed(ActionEvent e) {
+        move();
         repaint();
     }
 
@@ -180,6 +213,18 @@ public class PacMan extends JPanel implements ActionListener, KeyListener {
 
     @Override
     public void keyReleased(KeyEvent e) {
-        System.out.println("keyEvent: "+e.getKeyCode());
+        //System.out.println("keyEvent: "+e.getKeyCode());
+        if (e.getKeyCode() == KeyEvent.VK_UP) {
+            pacman.updateDirection('U');
+        }
+        else if (e.getKeyCode() == KeyEvent.VK_DOWN) {
+            pacman.updateDirection('D');
+        }
+        else if (e.getKeyCode() == KeyEvent.VK_LEFT) {
+            pacman.updateDirection('L');
+        }
+        else if (e.getKeyCode() == KeyEvent.VK_RIGHT) {
+            pacman.updateDirection('R');
+        }
     }
 }
